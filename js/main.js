@@ -1,5 +1,5 @@
 let game = {
-    cs: 100, // cell size
+    cs: 85, // cell size
     rows: 4,
     cols: 4,
     loading: false,
@@ -111,8 +111,8 @@ let game = {
 
     function draw_cells(key) {
         gs.css({
-            width: game.cols * game.cs + 'px',
-            height: game.rows * game.cs + 'px'
+            width: game.cols * game.cs + 2 + 'px',
+            height: game.rows * game.cs + 2 + 'px'
         });
 
         for(let i=0; i<key.length ;i++) {
