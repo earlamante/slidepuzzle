@@ -1,0 +1,30 @@
+@font-face {
+    font-family: 'Digital Numbers Regular';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Digital Numbers Regular'), url('../fonts/DigitalNumbers-Regular.woff') format('woff');
+}
+
+body {
+
+}
+
+#game {
+    background: #5a5a5a;
+    margin: 0 auto;
+    position: relative;
+}
+#game.ready,
+#game .cell {
+    border: 1px solid #5a5a5a;
+}
+#game .cell {
+    background: #f4f4f4;
+    cursor: pointer;
+    position: absolute;
+    font-size: 35px;
+    text-align: center;
+    min-width: 1px;
+    min-height: 1px;
+    transition: all 200ms ease-in-out;
+}
