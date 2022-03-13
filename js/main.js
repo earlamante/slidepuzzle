@@ -98,7 +98,7 @@ let game = {
     }
 
     function game_over() {
-        alert('Wow! You win!');
+        alert('Wow! You win! Refresh the page for another image!');
     }
 
     function generate(length) {
