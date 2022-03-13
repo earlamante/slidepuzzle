@@ -19,7 +19,8 @@ body {
     border: 1px solid #5a5a5a;
 }
 #game .cell {
-    background: #f4f4f4;
+    background-color: #f4f4f4;
+    background-repeat: no-repeat;
     cursor: pointer;
     position: absolute;
     font-size: 35px;
@@ -27,4 +28,7 @@ body {
     min-width: 1px;
     min-height: 1px;
     transition: all 200ms ease-in-out;
+}
+.solution {
+    margin: 30px auto;
 }

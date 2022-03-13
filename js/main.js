@@ -1,12 +1,12 @@
 let game = {
-    cs: 85, // cell size
-    rows: 4,
-    cols: 4,
-    loading: false,
-};
+        cs: 85, // cell size
+        rows: 4,
+        cols: 4,
+        loading: false,
+    },
+    bgs = 10;
 (function ($) {
     let gs = $('#game');
-
     gs
         .on('click', '.cell', function (e) {
             e.preventDefault();
@@ -38,7 +38,17 @@ let game = {
             key = generate(cells);
         game.blank = cells - 1;
         draw_cells(key);
+        draw_solution();
         gs.addClass('ready');
+    }
+
+    function moveBg(elem, pos) {
+        console.log(pos);
+        let row = parseInt(pos / game.rows),
+            col = pos % game.cols;
+        elem.css({
+            backgroundPosition: '-' + (col * game.cs) + 'px -' + (row * game.cs) + 'px',
+        });
     }
 
     function move(elem, pos) {
@@ -106,6 +116,7 @@ let game = {
             data[length] = data[i];
             data[i] = t;
         }
+        game.bg = 'img/'+ (Math.floor(Math.random() * bgs)) +'.jpg';
         return data;
     }
 
@@ -116,10 +127,27 @@ let game = {
         });
 
         for(let i=0; i<key.length ;i++) {
-            let elem = $('<div class="cell" data-index="'+i+'" data-key="'+key[i]+'" style="width:'+ game.cs +'px;height:'+ game.cs +'px;line-height:'+ game.cs +'px;">'+ key[i] +'</div>');
+            let elem = $('<div class="cell" data-index="'+i+'" data-key="'+key[i]+'" style="' +
+                'width:'+ game.cs +'px;' +
+                'height:'+ game.cs +'px;' +
+                'line-height:'+ game.cs +'px;' +
+                'background-image:url('+game.bg+');' +
+                'background-size:'+(game.cols * game.cs) + 'px ' + (game.rows * game.cs) + 'px' +
+                '"></div>');
             elem.appendTo(gs);
+            moveBg(elem, key[i]-1);
             move(elem, i);
         }
+    }
+
+    function draw_solution() {
+        let elem = $('<div class="solution" style="' +
+            'width:'+ (game.cols * game.cs) +'px;' +
+            'height:'+ (game.rows * game.cs) +'px;' +
+            'background-image:url('+game.bg+');' +
+            'background-size: cover;' +
+            '"></div>');
+        elem.appendTo('#game_wrapper');
     }
 
     start();
