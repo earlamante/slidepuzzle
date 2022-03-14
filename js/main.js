@@ -4,9 +4,13 @@ let game = {
         cols: 4,
         loading: false,
     },
-    bgs = 10;
+    bgs = 20;
 (function ($) {
-    let gs = $('#game');
+    let gs = $('#game'),
+        gi = null,
+        settings = $('#settings');
+    game.bg = 'img/'+ (Math.floor(Math.random() * bgs)) +'.jpg';
+
     gs
         .on('click', '.cell', function (e) {
             e.preventDefault();
@@ -33,22 +37,53 @@ let game = {
             e.preventDefault();
         });
 
+    settings
+        .on('click', 'button', function(e) {
+            e.preventDefault();
+            if($(this).hasClass('active')) return false;
+            if(confirm('End current game and change difficulty?')) {
+                settings.find('.active').removeClass('active');
+                $(this).addClass('active');
+                $('#solution_wrapper').remove();
+                gs.html('');
+                init();
+            }
+        });
+
+    function init() {
+        prepare();
+        draw_solution();
+        start();
+    }
+
+    function prepare() {
+        let mw = $(window).outerWidth(),
+            mode = settings.find('.active');
+        mw = mw > 500 ? 500 : mw-10;
+        game.cols = parseInt(mode.data('cols'));
+        game.rows = parseInt(mode.data('rows'));
+        game.cs = Math.floor(mw / game.cols);
+        game.cs = game.cs > 100 ? 100 : game.cs;
+    }
+
     function start() {
         let cells = game.rows * game.cols,
             key = generate(cells);
         game.blank = cells - 1;
         draw_cells(key);
-        draw_solution();
         gs.addClass('ready');
     }
 
     function moveBg(elem, pos) {
-        console.log(pos);
         let row = parseInt(pos / game.rows),
-            col = pos % game.cols;
-        elem.css({
-            backgroundPosition: '-' + (col * game.cs) + 'px -' + (row * game.cs) + 'px',
+            col = pos % game.cols,
+            img = gi.clone().attr('id', '');
+        img.css({
+            position: 'absolute',
+            top: '-' + (row * game.cs) + 'px',
+            left: '-' + (col * game.cs) + 'px'
         });
+        img.appendTo(elem.find('.cell-img'));
     }
 
     function move(elem, pos) {
@@ -116,7 +151,6 @@ let game = {
             data[length] = data[i];
             data[i] = t;
         }
-        game.bg = 'img/'+ (Math.floor(Math.random() * bgs)) +'.jpg';
         return data;
     }
 
@@ -130,10 +164,9 @@ let game = {
             let elem = $('<div class="cell" data-index="'+i+'" data-key="'+key[i]+'" style="' +
                 'width:'+ game.cs +'px;' +
                 'height:'+ game.cs +'px;' +
-                'line-height:'+ game.cs +'px;' +
-                'background-image:url('+game.bg+');' +
-                'background-size:'+(game.cols * game.cs) + 'px ' + (game.rows * game.cs) + 'px' +
-                '"></div>');
+                // 'background-image:url('+game.bg+');' +
+                // 'background-size:'+(game.cols * game.cs) + 'px ' + (game.rows * game.cs) + 'px' +
+                '"><div class="cell-img"></div></div>');
             elem.appendTo(gs);
             moveBg(elem, key[i]-1);
             move(elem, i);
@@ -141,14 +174,13 @@ let game = {
     }
 
     function draw_solution() {
-        let elem = $('<div class="solution" style="' +
+        let div = $('<div id="solution_wrapper" class="text-center py-5"></div>');
+        gi = $('<img id="solution" className="solution" src="'+ game.bg +'" style="' +
             'width:'+ (game.cols * game.cs) +'px;' +
             'height:'+ (game.rows * game.cs) +'px;' +
-            'background-image:url('+game.bg+');' +
-            'background-size: cover;' +
-            '"></div>');
-        elem.appendTo('#game_wrapper');
+            '">');
+        gi.appendTo(div);
+        div.appendTo('#game_wrapper');
     }
-
-    start();
+    init();
 })(jQuery);

@@ -9,6 +9,17 @@ body {
 
 }
 
+#settings button {
+    background: #f4f4f4;
+    border: 2px solid #3d3d3d;
+}
+
+#settings button.active {
+    background: #5a5a5a;
+    border: 2px solid #3d3d3d;
+    color: #fff;
+}
+
 #game {
     background: #5a5a5a;
     position: relative;
@@ -28,6 +39,12 @@ body {
     min-width: 1px;
     min-height: 1px;
     transition: all 200ms ease-in-out;
+}
+.cell-img {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
 }
 .solution {
     margin: 30px auto;
