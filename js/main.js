@@ -50,6 +50,14 @@ let game = {
             }
         });
 
+    function load() {
+        prepare();
+        draw_solution();
+        $('img').on('load', function() {
+            start();
+        });
+    }
+
     function init() {
         prepare();
         draw_solution();
@@ -182,5 +190,5 @@ let game = {
         gi.appendTo(div);
         div.appendTo('#game_wrapper');
     }
-    init();
+    load();
 })(jQuery);
