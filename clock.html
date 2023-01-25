@@ -1,0 +1,162 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <title>Analog Clock</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        html, body {
+            width: 100vw;
+            height: 100vh;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        #wrapper {
+            position: relative;
+        }
+        #face {
+
+        }
+        #hour,
+        #min,
+        #sec {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        #hour { z-index: 2; }
+        #min { z-index: 3; }
+        #sec {
+            z-index: 4;
+        }
+        .animate {
+            transition: all 200ms cubic-bezier(0.61, 1.01, 0.85, 1.51);
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="wrapper">
+    <canvas id="face"></canvas>
+    <canvas id="hour" class="animate"></canvas>
+    <canvas id="min" class="animate"></canvas>
+    <canvas id="sec" class="animate"></canvas>
+</div>
+
+<script type="text/javascript">
+    let face = document.getElementById('face').getContext('2d');
+    let hour = document.getElementById('hour').getContext('2d');
+    let min = document.getElementById('min').getContext('2d');
+    let sec = document.getElementById('sec').getContext('2d');
+    let step = 6;
+
+    function draw_secs(x,y,w,h,deg, face){
+        face.save();
+        face.translate(x, y);
+        face.rotate(degrees_to_radians(deg+90));
+        face.fillStyle = "#000";
+        face.fillRect(-1*(w/2), (-1*(h/2))*0.08, w, h);
+        face.restore();
+    }
+    function degrees_to_radians(degrees){
+        return degrees * Math.PI / 180;
+    }
+    function radians_to_degrees(radians){
+        return radians * 180 / Math.PI;
+    };
+
+    let init = function() {
+        let x = (Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0) < Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0) ? Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0) : Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)) - 10;
+        let radius = ((x/2)-5);
+        face.canvas.width = face.canvas.height = x;
+        hour.canvas.width = hour.canvas.height = x;
+        min.canvas.width = min.canvas.height = x;
+        sec.canvas.width = sec.canvas.height = x;
+
+        // draw face
+        let  p = new Path2D();
+        face.lineWidth = 5;
+        face.fillStyle = '#000';
+        p.arc((x/2), (x/2), radius, 0, 2 * Math.PI);
+        face.stroke(p);
+
+        let bars = 60;
+        for(let i = 0; i < bars; i++){
+            let cos = radius*Math.cos(degrees_to_radians(i*6));
+            let sin = radius*Math.sin(degrees_to_radians(i*6));
+            draw_secs(cos+(x/2),sin+(x/2),3,30,i*6, face );
+        }
+
+        bars = 60;
+        for(let i = 0; i < bars; i=i+5){
+            let cos = radius*Math.cos(degrees_to_radians(i*6));
+            let sin = radius*Math.sin(degrees_to_radians(i*6));
+            draw_secs(cos+(x/2),sin+(x/2),8,50,i*6, face );
+        }
+
+        // draw hands
+        hour.strokeStyle = '#000';
+        hour.lineWidth = 7;
+        hour.beginPath();
+        hour.moveTo(x/2, x/2);
+        hour.lineTo(x/2, x*0.3);
+        hour.stroke();
+
+        min.strokeStyle = '#000';
+        min.lineWidth = 5;
+        min.beginPath();
+        min.moveTo(x/2, x/2);
+        min.lineTo(x/2, x*0.1);
+        min.stroke();
+
+        sec.strokeStyle = '#f33';
+        sec.lineWidth = 3;
+        sec.beginPath();
+        sec.moveTo(x/2, x/2);
+        sec.lineTo(x/2, x*0.05);
+        sec.stroke();
+        sec.lineWidth = 10;
+        sec.beginPath();
+        sec.moveTo(x/2, x/2);
+        sec.lineTo(x/2, (x/2) + ((x*0.95)*0.1));
+        sec.stroke();
+
+        next();
+    };
+    let s = 55;
+    let next = function() {
+        let t = new Date();
+        let x = (Math.abs(t.getHours()-12) * (step*5)) + (t.getMinutes() * 0.1 * 5); // special calc for h
+        let i = t.getSeconds() * step;
+        if(!i) {
+            document.getElementById('sec').style.transform = "rotate(360deg)";
+            setTimeout(function() {
+                document.getElementById('sec').classList.remove('animate');
+                document.getElementById('sec').style.transform = "rotate("+ i +"deg)";
+
+                setTimeout(function() {
+                    document.getElementById('sec').classList.add('animate');
+                }, 100);
+            }, 400);
+        } else {
+            document.getElementById('sec').style.transform = "rotate("+ i +"deg)";
+        }
+
+        document.getElementById('min').style.transform = "rotate("+ (t.getMinutes() * step) +"deg)";
+        document.getElementById('hour').style.transform = "rotate("+ x +"deg)";
+        setTimeout(next, 1000);
+    };
+
+    init();
+</script>
+
+</body>
+</html>
